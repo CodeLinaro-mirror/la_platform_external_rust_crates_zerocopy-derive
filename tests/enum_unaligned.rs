@@ -1,21 +1,14 @@
-// Copyright 2019 The Fuchsia Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2019 The Fuchsia Authors
+//
+// Licensed under a BSD-style license <LICENSE-BSD>, Apache License, Version 2.0
+// <LICENSE-APACHE or https://www.apache.org/licenses/LICENSE-2.0>, or the MIT
+// license <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your option.
+// This file may not be copied, modified, or distributed except according to
+// those terms.
 
 #![allow(warnings)]
 
-use zerocopy::Unaligned;
-
-struct IsUnaligned<T: Unaligned>(T);
-
-// Fail compilation if `$ty: !Unaligned`.
-macro_rules! is_unaligned {
-    ($ty:ty) => {
-        const _: () = {
-            let _: IsUnaligned<$ty>;
-        };
-    };
-}
+use {static_assertions::assert_impl_all, zerocopy::Unaligned};
 
 // An enum is `Unaligned` if:
 // - No `repr(align(N > 1))`
@@ -27,7 +20,7 @@ enum Foo {
     A,
 }
 
-is_unaligned!(Foo);
+assert_impl_all!(Foo: Unaligned);
 
 #[derive(Unaligned)]
 #[repr(i8)]
@@ -35,7 +28,7 @@ enum Bar {
     A,
 }
 
-is_unaligned!(Bar);
+assert_impl_all!(Bar: Unaligned);
 
 #[derive(Unaligned)]
 #[repr(u8, align(1))]
@@ -43,7 +36,7 @@ enum Baz {
     A,
 }
 
-is_unaligned!(Baz);
+assert_impl_all!(Baz: Unaligned);
 
 #[derive(Unaligned)]
 #[repr(i8, align(1))]
@@ -51,4 +44,4 @@ enum Blah {
     B,
 }
 
-is_unaligned!(Blah);
+assert_impl_all!(Blah: Unaligned);
