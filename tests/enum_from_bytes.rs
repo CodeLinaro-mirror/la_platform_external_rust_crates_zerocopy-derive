@@ -1,10 +1,19 @@
-// Copyright 2019 The Fuchsia Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2019 The Fuchsia Authors
+//
+// Licensed under a BSD-style license <LICENSE-BSD>, Apache License, Version 2.0
+// <LICENSE-APACHE or https://www.apache.org/licenses/LICENSE-2.0>, or the MIT
+// license <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your option.
+// This file may not be copied, modified, or distributed except according to
+// those terms.
 
 #![allow(warnings)]
 
-use zerocopy::FromBytes;
+mod util;
+
+use {
+    static_assertions::assert_impl_all,
+    zerocopy::{FromBytes, FromZeroes},
+};
 
 // An enum is `FromBytes` if:
 // - `repr(uN)` or `repr(iN)`
@@ -23,18 +32,7 @@ use zerocopy::FromBytes;
 // `Variant128` has a discriminant of -128) since Rust won't automatically wrap
 // a signed discriminant around without you explicitly telling it to.
 
-struct IsFromBytes<T: FromBytes>(T);
-
-// Fail compilation if `$ty: !FromBytes`.
-macro_rules! is_from_bytes {
-    ($ty:ty) => {
-        const _: () = {
-            let _: IsFromBytes<$ty>;
-        };
-    };
-}
-
-#[derive(FromBytes)]
+#[derive(FromZeroes, FromBytes)]
 #[repr(u8)]
 enum FooU8 {
     Variant0,
@@ -295,9 +293,9 @@ enum FooU8 {
     Variant255,
 }
 
-is_from_bytes!(FooU8);
+assert_impl_all!(FooU8: FromBytes);
 
-#[derive(FromBytes)]
+#[derive(FromZeroes, FromBytes)]
 #[repr(i8)]
 enum FooI8 {
     Variant0,
@@ -558,9 +556,9 @@ enum FooI8 {
     Variant255,
 }
 
-is_from_bytes!(FooI8);
+assert_impl_all!(FooI8: FromBytes);
 
-#[derive(FromBytes)]
+#[derive(FromZeroes, FromBytes)]
 #[repr(u8, align(2))]
 enum FooU8Align {
     Variant0,
@@ -821,9 +819,9 @@ enum FooU8Align {
     Variant255,
 }
 
-is_from_bytes!(FooU8Align);
+assert_impl_all!(FooU8Align: FromBytes);
 
-#[derive(FromBytes)]
+#[derive(FromZeroes, FromBytes)]
 #[repr(i8, align(2))]
 enum FooI8Align {
     Variant0,
@@ -1084,9 +1082,9 @@ enum FooI8Align {
     Variant255,
 }
 
-is_from_bytes!(FooI8Align);
+assert_impl_all!(FooI8Align: FromBytes);
 
-#[derive(FromBytes)]
+#[derive(FromZeroes, FromBytes)]
 #[repr(u16)]
 enum FooU16 {
     Variant0,
@@ -66627,9 +66625,9 @@ enum FooU16 {
     Variant65535,
 }
 
-is_from_bytes!(FooU16);
+assert_impl_all!(FooU16: FromBytes);
 
-#[derive(FromBytes)]
+#[derive(FromZeroes, FromBytes)]
 #[repr(i16)]
 enum FooI16 {
     Variant0,
@@ -132170,4 +132168,4 @@ enum FooI16 {
     Variant65535,
 }
 
-is_from_bytes!(FooI16);
+assert_impl_all!(FooI16: FromBytes);

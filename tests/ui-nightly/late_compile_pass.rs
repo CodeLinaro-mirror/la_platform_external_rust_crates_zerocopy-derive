@@ -1,9 +1,19 @@
-// Copyright 2019 The Fuchsia Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2019 The Fuchsia Authors
+//
+// Licensed under a BSD-style license <LICENSE-BSD>, Apache License, Version 2.0
+// <LICENSE-APACHE or https://www.apache.org/licenses/LICENSE-2.0>, or the MIT
+// license <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your option.
+// This file may not be copied, modified, or distributed except according to
+// those terms.
 
 #[macro_use]
 extern crate zerocopy;
+
+#[path = "../util.rs"]
+mod util;
+
+use self::util::{NotZerocopy, AU16};
+use zerocopy::KnownLayout;
 
 fn main() {}
 
@@ -12,12 +22,21 @@ fn main() {}
 // the compiler will never get to that pass, and so we won't get the errors.
 
 //
+// FromZeroes errors
+//
+
+#[derive(FromZeroes)]
+struct FromZeroes1 {
+    value: NotZerocopy,
+}
+
+//
 // FromBytes errors
 //
 
 #[derive(FromBytes)]
 struct FromBytes1 {
-    not_from_bytes: &'static str,
+    value: NotZerocopy,
 }
 
 //
@@ -27,8 +46,7 @@ struct FromBytes1 {
 #[derive(AsBytes)]
 #[repr(C)]
 struct AsBytes1 {
-    a: u8,
-    b: u16,
+    value: NotZerocopy,
 }
 
 //
@@ -38,7 +56,7 @@ struct AsBytes1 {
 #[derive(Unaligned)]
 #[repr(C)]
 struct Unaligned1 {
-    aligned: u16,
+    aligned: AU16,
 }
 
 // This specifically tests a bug we had in an old version of the code in which
@@ -47,11 +65,11 @@ struct Unaligned1 {
 #[repr(C)]
 struct Unaligned2 {
     unaligned: u8,
-    aligned: u16,
+    aligned: AU16,
 }
 
 #[derive(Unaligned)]
 #[repr(transparent)]
 struct Unaligned3 {
-    aligned: u16,
+    aligned: AU16,
 }

@@ -1,23 +1,16 @@
-// Copyright 2019 The Fuchsia Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2019 The Fuchsia Authors
+//
+// Licensed under a BSD-style license <LICENSE-BSD>, Apache License, Version 2.0
+// <LICENSE-APACHE or https://www.apache.org/licenses/LICENSE-2.0>, or the MIT
+// license <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your option.
+// This file may not be copied, modified, or distributed except according to
+// those terms.
 
 #![allow(warnings)]
 
 use std::{marker::PhantomData, option::IntoIter};
 
-use zerocopy::AsBytes;
-
-struct IsAsBytes<T: AsBytes>(T);
-
-// Fail compilation if `$ty: !AsBytes`.
-macro_rules! is_as_bytes {
-    ($ty:ty) => {
-        const _: () = {
-            let _: IsAsBytes<$ty>;
-        };
-    };
-}
+use {static_assertions::assert_impl_all, zerocopy::AsBytes};
 
 // A union is `AsBytes` if:
 // - all fields are `AsBytes`
@@ -31,7 +24,7 @@ union CZst {
     a: (),
 }
 
-is_as_bytes!(CZst);
+assert_impl_all!(CZst: AsBytes);
 
 #[derive(AsBytes)]
 #[repr(C)]
@@ -40,7 +33,7 @@ union C {
     b: u8,
 }
 
-is_as_bytes!(C);
+assert_impl_all!(C: AsBytes);
 
 // Transparent unions are unstable; see issue #60405
 // <https://github.com/rust-lang/rust/issues/60405> for more information.
@@ -60,7 +53,7 @@ union CZstPacked {
     a: (),
 }
 
-is_as_bytes!(CZstPacked);
+assert_impl_all!(CZstPacked: AsBytes);
 
 #[derive(AsBytes)]
 #[repr(C, packed)]
@@ -69,7 +62,7 @@ union CPacked {
     b: i8,
 }
 
-is_as_bytes!(CPacked);
+assert_impl_all!(CPacked: AsBytes);
 
 #[derive(AsBytes)]
 #[repr(C, packed)]
@@ -79,4 +72,4 @@ union CMultibytePacked {
     c: f32,
 }
 
-is_as_bytes!(CMultibytePacked);
+assert_impl_all!(CMultibytePacked: AsBytes);

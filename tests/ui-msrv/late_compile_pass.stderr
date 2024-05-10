@@ -1,66 +1,74 @@
-error[E0277]: the trait bound `AsBytes1: HasPadding<false>` is not satisfied
-  --> tests/ui-msrv/late_compile_pass.rs:27:10
+warning: unused import: `zerocopy::KnownLayout`
+  --> tests/ui-msrv/late_compile_pass.rs:16:5
    |
-27 | #[derive(AsBytes)]
-   |          ^^^^^^^ the trait `HasPadding<false>` is not implemented for `AsBytes1`
+16 | use zerocopy::KnownLayout;
+   |     ^^^^^^^^^^^^^^^^^^^^^
    |
-   = help: the following implementations were found:
-             <AsBytes1 as HasPadding<true>>
-note: required by a bound in `assert_no_padding`
-  --> tests/ui-msrv/late_compile_pass.rs:27:10
-   |
-27 | #[derive(AsBytes)]
-   |          ^^^^^^^ required by this bound in `assert_no_padding`
-   = note: this error originates in the derive macro `AsBytes` (in Nightly builds, run with -Z macro-backtrace for more info)
+   = note: `#[warn(unused_imports)]` on by default
 
-error[E0277]: the trait bound `&'static str: FromBytes` is not satisfied
-  --> tests/ui-msrv/late_compile_pass.rs:18:10
+error[E0277]: the trait bound `NotZerocopy: FromZeroes` is not satisfied
+  --> tests/ui-msrv/late_compile_pass.rs:28:10
    |
-18 | #[derive(FromBytes)]
-   |          ^^^^^^^^^ the trait `FromBytes` is not implemented for `&'static str`
+28 | #[derive(FromZeroes)]
+   |          ^^^^^^^^^^ the trait `FromZeroes` is not implemented for `NotZerocopy`
    |
-note: required by a bound in `ImplementsFromBytes`
-  --> tests/ui-msrv/late_compile_pass.rs:18:10
+   = help: see issue #48214
+   = note: this error originates in the derive macro `FromZeroes` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `NotZerocopy: FromBytes` is not satisfied
+  --> tests/ui-msrv/late_compile_pass.rs:37:10
    |
-18 | #[derive(FromBytes)]
-   |          ^^^^^^^^^ required by this bound in `ImplementsFromBytes`
+37 | #[derive(FromBytes)]
+   |          ^^^^^^^^^ the trait `FromBytes` is not implemented for `NotZerocopy`
+   |
+   = help: see issue #48214
    = note: this error originates in the derive macro `FromBytes` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `u16: Unaligned` is not satisfied
-  --> tests/ui-msrv/late_compile_pass.rs:38:10
+error[E0277]: the trait bound `FromBytes1: FromZeroes` is not satisfied
+  --> tests/ui-msrv/late_compile_pass.rs:37:10
    |
-38 | #[derive(Unaligned)]
-   |          ^^^^^^^^^ the trait `Unaligned` is not implemented for `u16`
+37 | #[derive(FromBytes)]
+   |          ^^^^^^^^^ the trait `FromZeroes` is not implemented for `FromBytes1`
    |
-note: required by a bound in `<Unaligned1 as Unaligned>::only_derive_is_allowed_to_implement_this_trait::ImplementsUnaligned`
-  --> tests/ui-msrv/late_compile_pass.rs:38:10
+note: required by a bound in `FromBytes`
+  --> $WORKSPACE/src/lib.rs
    |
-38 | #[derive(Unaligned)]
-   |          ^^^^^^^^^ required by this bound in `<Unaligned1 as Unaligned>::only_derive_is_allowed_to_implement_this_trait::ImplementsUnaligned`
-   = note: this error originates in the derive macro `Unaligned` (in Nightly builds, run with -Z macro-backtrace for more info)
+   | pub unsafe trait FromBytes: FromZeroes {
+   |                             ^^^^^^^^^^ required by this bound in `FromBytes`
+   = note: this error originates in the derive macro `FromBytes` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `u16: Unaligned` is not satisfied
+error[E0277]: the trait bound `NotZerocopy: AsBytes` is not satisfied
   --> tests/ui-msrv/late_compile_pass.rs:46:10
    |
-46 | #[derive(Unaligned)]
-   |          ^^^^^^^^^ the trait `Unaligned` is not implemented for `u16`
+46 | #[derive(AsBytes)]
+   |          ^^^^^^^ the trait `AsBytes` is not implemented for `NotZerocopy`
    |
-note: required by a bound in `<Unaligned2 as Unaligned>::only_derive_is_allowed_to_implement_this_trait::ImplementsUnaligned`
-  --> tests/ui-msrv/late_compile_pass.rs:46:10
+   = help: see issue #48214
+   = note: this error originates in the derive macro `AsBytes` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `AU16: Unaligned` is not satisfied
+  --> tests/ui-msrv/late_compile_pass.rs:56:10
    |
-46 | #[derive(Unaligned)]
-   |          ^^^^^^^^^ required by this bound in `<Unaligned2 as Unaligned>::only_derive_is_allowed_to_implement_this_trait::ImplementsUnaligned`
+56 | #[derive(Unaligned)]
+   |          ^^^^^^^^^ the trait `Unaligned` is not implemented for `AU16`
+   |
+   = help: see issue #48214
    = note: this error originates in the derive macro `Unaligned` (in Nightly builds, run with -Z macro-backtrace for more info)
 
-error[E0277]: the trait bound `u16: Unaligned` is not satisfied
-  --> tests/ui-msrv/late_compile_pass.rs:53:10
+error[E0277]: the trait bound `AU16: Unaligned` is not satisfied
+  --> tests/ui-msrv/late_compile_pass.rs:64:10
    |
-53 | #[derive(Unaligned)]
-   |          ^^^^^^^^^ the trait `Unaligned` is not implemented for `u16`
+64 | #[derive(Unaligned)]
+   |          ^^^^^^^^^ the trait `Unaligned` is not implemented for `AU16`
    |
-note: required by a bound in `<Unaligned3 as Unaligned>::only_derive_is_allowed_to_implement_this_trait::ImplementsUnaligned`
-  --> tests/ui-msrv/late_compile_pass.rs:53:10
+   = help: see issue #48214
+   = note: this error originates in the derive macro `Unaligned` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error[E0277]: the trait bound `AU16: Unaligned` is not satisfied
+  --> tests/ui-msrv/late_compile_pass.rs:71:10
    |
-53 | #[derive(Unaligned)]
-   |          ^^^^^^^^^ required by this bound in `<Unaligned3 as Unaligned>::only_derive_is_allowed_to_implement_this_trait::ImplementsUnaligned`
+71 | #[derive(Unaligned)]
+   |          ^^^^^^^^^ the trait `Unaligned` is not implemented for `AU16`
+   |
+   = help: see issue #48214
    = note: this error originates in the derive macro `Unaligned` (in Nightly builds, run with -Z macro-backtrace for more info)
