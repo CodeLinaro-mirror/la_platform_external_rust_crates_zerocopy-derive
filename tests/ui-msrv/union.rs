@@ -1,10 +1,18 @@
-// Copyright 2019 The Fuchsia Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+// Copyright 2019 The Fuchsia Authors
+//
+// Licensed under a BSD-style license <LICENSE-BSD>, Apache License, Version 2.0
+// <LICENSE-APACHE or https://www.apache.org/licenses/LICENSE-2.0>, or the MIT
+// license <LICENSE-MIT or https://opensource.org/licenses/MIT>, at your option.
+// This file may not be copied, modified, or distributed except according to
+// those terms.
 
 #[macro_use]
 extern crate zerocopy;
 
+#[path = "../util.rs"]
+mod util;
+
+use self::util::AU16;
 use std::mem::ManuallyDrop;
 
 fn main() {}
@@ -21,7 +29,7 @@ union AsBytes1<T> {
 
 #[derive(AsBytes)]
 #[repr(C)]
-union AsBytes {
+union AsBytes2 {
     foo: u8,
     bar: [u8; 2],
 }
@@ -34,7 +42,7 @@ union AsBytes {
 #[repr(C, align(2))]
 union Unaligned1 {
     foo: i16,
-    bar: u16,
+    bar: AU16,
 }
 
 // Transparent unions are unstable; see issue #60405
